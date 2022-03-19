@@ -1,7 +1,6 @@
 package com.readandlearn.japanese;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentContainerView;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
@@ -19,7 +18,10 @@ public class MainActivity extends AppCompatActivity {
 
         BottomNavigationView nav = findViewById(R.id.bottomNavigationView);
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.fragmentContainerView);
-        NavController navController = navHostFragment.getNavController();
-        NavigationUI.setupWithNavController(nav, navController);
+        NavController navController;
+        if (navHostFragment != null) {
+            navController = navHostFragment.getNavController();
+            NavigationUI.setupWithNavController(nav, navController);
+        }
     }
 }
