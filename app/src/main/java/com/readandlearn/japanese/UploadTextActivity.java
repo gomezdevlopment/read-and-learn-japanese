@@ -122,7 +122,7 @@ public class UploadTextActivity extends AppCompatActivity {
         snackbar.setAction("OK", view -> snackbar.dismiss());
         snackbar.setTextColor(Color.WHITE);
         snackbar.setBackgroundTint(Color.BLACK);
-        snackbar.setActionTextColor(ContextCompat.getColor(context, R.color.samuraiBlue));
+        snackbar.setActionTextColor(ContextCompat.getColor(context, R.color.japanRed));
         snackbar.show();
     }
 }

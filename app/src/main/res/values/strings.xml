@@ -2,4 +2,8 @@
     <string name="app_name">ReadAndLearnJapanese</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="deleteText">Delete this text?</string>
+    <string name="deleteTextSubText">Are you sure? Deleting this text will not affect the words you have highlighted.</string>
+    <string name="yes">Yes</string>
+    <string name="cancel">Cancel</string>
 </resources>

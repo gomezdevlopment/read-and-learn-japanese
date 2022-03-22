@@ -17,10 +17,22 @@
             android:layout_marginEnd="30dp"
             android:layout_marginBottom="30dp"
             android:clickable="true"
+            android:contentDescription="Add Text File"
             android:focusable="true"
             android:src="@drawable/ic_math_plus"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/myTextsRecycler"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="25dp"
+            android:layout_marginTop="25dp"
+            android:layout_marginEnd="25dp"
+            app:layout_constraintBottom_toTopOf="@+id/addTextFloating"
             app:layout_constraintEnd_toEndOf="parent"
-            android:contentDescription="Add Text File" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>
