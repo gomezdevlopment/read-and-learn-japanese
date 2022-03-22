@@ -1,33 +1,26 @@
 package com.readandlearn.japanese;
 
 import android.os.Bundle;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.UiThread;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SearchView;
 import android.widget.TextView;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Objects;
 import java.util.Scanner;
 import java.util.regex.Pattern;
-
 
 public class TranslateFragment extends Fragment {
 
@@ -162,23 +155,20 @@ public class TranslateFragment extends Fragment {
                 }
             }
 
-            searchEnglish.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    String englishQuery = "\"" + word + "\"";
+            searchEnglish.setOnClickListener(view -> {
+                String englishQuery = "\"" + word + "\"";
 
-                    Thread thread = new Thread(() -> {
-                        try  {
-                            queryJisho(englishQuery, true);
-                            requireActivity().runOnUiThread(() -> {
-                                searchEnglish.setVisibility(View.INVISIBLE);
-                            });
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    });
-                    thread.start();
-                }
+                Thread thread = new Thread(() -> {
+                    try  {
+                        queryJisho(englishQuery, true);
+                        requireActivity().runOnUiThread(() -> {
+                            searchEnglish.setVisibility(View.INVISIBLE);
+                        });
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                });
+                thread.start();
             });
 
             requireActivity().runOnUiThread(() -> {
