@@ -26,6 +26,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 
 public class TranslateFragment extends Fragment {
@@ -34,6 +35,7 @@ public class TranslateFragment extends Fragment {
     ArrayList<DictionaryEntry> dictionaryEntries;
     RecyclerView recycler;
     DictionaryRecyclerAdapter adapter;
+    TextView searchEnglish;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -54,13 +56,18 @@ public class TranslateFragment extends Fragment {
         SearchView searchBar = view.findViewById(R.id.searchBar);
         dictionaryEntries = new ArrayList<>();
         recycler = view.findViewById(R.id.dictionaryRecycler);
+        searchEnglish = view.findViewById(R.id.searchEnglish);
 
         searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
+                searchEnglish.setVisibility(View.INVISIBLE);
+                char first = s.charAt(0);
+                char last = s.charAt(s.length()-1);
+
                 Thread thread = new Thread(() -> {
                     try  {
-                        queryJisho(s);
+                        queryJisho(s, Character.compare(first, last) == 0 && Character.compare(first, '\"') == 0);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -76,7 +83,7 @@ public class TranslateFragment extends Fragment {
         });
     }
 
-    private void queryJisho(String word){
+    private void queryJisho(String word, boolean englishSearch){
         URL url;
         StringBuilder info = new StringBuilder();
 
@@ -154,7 +161,35 @@ public class TranslateFragment extends Fragment {
                     dictionaryEntries.add(new DictionaryEntry(kanji, reading, String.valueOf(englishDefinitions)));
                 }
             }
-            requireActivity().runOnUiThread(this::setAdapter);
+
+            searchEnglish.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    String englishQuery = "\"" + word + "\"";
+
+                    Thread thread = new Thread(() -> {
+                        try  {
+                            queryJisho(englishQuery, true);
+                            requireActivity().runOnUiThread(() -> {
+                                searchEnglish.setVisibility(View.INVISIBLE);
+                            });
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    });
+                    thread.start();
+                }
+            });
+
+            requireActivity().runOnUiThread(() -> {
+                setAdapter();
+                Pattern p = Pattern.compile("[^a-zA-Z0-9]");
+                boolean hasSpecialChar = p.matcher(word).find();
+                if(!hasSpecialChar && !englishSearch){
+                    searchEnglish.setText("Search for the english word '" + word + "' instead?");
+                    searchEnglish.setVisibility(View.VISIBLE);
+                }
+            });
         } catch (JSONException e) {
             e.printStackTrace();
         }
