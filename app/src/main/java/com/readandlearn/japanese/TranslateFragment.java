@@ -6,6 +6,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +23,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -26,7 +31,9 @@ import java.util.Scanner;
 public class TranslateFragment extends Fragment {
 
     HttpURLConnection conn;
-    TextView wordInfo;
+    ArrayList<DictionaryEntry> dictionaryEntries;
+    RecyclerView recycler;
+    DictionaryRecyclerAdapter adapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -45,7 +52,8 @@ public class TranslateFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         SearchView searchBar = view.findViewById(R.id.searchBar);
-        wordInfo = view.findViewById(R.id.wordInfo);
+        dictionaryEntries = new ArrayList<>();
+        recycler = view.findViewById(R.id.dictionaryRecycler);
 
         searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -99,35 +107,64 @@ public class TranslateFragment extends Fragment {
 
         JSONObject data;
         JSONArray array;
+        dictionaryEntries.clear();
         try {
             data = new JSONObject(info.toString());
             array = data.getJSONArray("data");
 
-            String kanji = array.getJSONObject(0).getJSONArray("japanese").getJSONObject(0).getString("word");
-            String reading = array.getJSONObject(0).getJSONArray("japanese").getJSONObject(0).getString("reading");
-            StringBuilder englishDefinitions = new StringBuilder("");
+            for(int arrayIndex = 0; arrayIndex<array.length(); arrayIndex++){
+                String kanji = "";
+                String reading = "";
+                StringBuilder englishDefinitions = new StringBuilder("");
 
-            JSONArray senses = array.getJSONObject(0).getJSONArray("senses");
+                try{
+                    kanji = array.getJSONObject(arrayIndex).getJSONArray("japanese").getJSONObject(0).getString("word");
+                }catch(JSONException e){
+                    e.printStackTrace();
+                }
 
-            for(int i = 0; i<senses.length(); i++){
-                JSONArray definitions = senses.getJSONObject(i).getJSONArray("english_definitions");
-                for(int j= 0; j < definitions.length(); j++){
-                    String definition = definitions.getString(j);
-                    if(j != definitions.length()-1){
-                        englishDefinitions.append(definition);
-                    }else{
-                        englishDefinitions.append(definition).append(", ");
+                try{
+                    reading = array.getJSONObject(arrayIndex).getJSONArray("japanese").getJSONObject(0).getString("reading");
+                }catch(JSONException e){
+                    e.printStackTrace();
+                }
+
+                try{
+                    JSONArray senses = array.getJSONObject(arrayIndex).getJSONArray("senses");
+
+                    for(int i = 0; i<senses.length(); i++){
+                        JSONArray definitions = senses.getJSONObject(i).getJSONArray("english_definitions");
+                        englishDefinitions.append(i+1).append(".) ");
+                        for(int j= 0; j < definitions.length(); j++){
+                            String definition = definitions.getString(j);
+                            if(j == definitions.length()-1){
+                                englishDefinitions.append(definition).append("\n");
+                            }else{
+                                englishDefinitions.append(definition).append(", ");
+                            }
+                        }
                     }
+                }catch(JSONException e){
+                    e.printStackTrace();
+                }
+
+                if(kanji.isEmpty() && !reading.isEmpty()){
+                    dictionaryEntries.add(new DictionaryEntry(reading, "", String.valueOf(englishDefinitions)));
+                }else{
+                    dictionaryEntries.add(new DictionaryEntry(kanji, reading, String.valueOf(englishDefinitions)));
                 }
             }
-            
-            requireActivity().runOnUiThread(() -> {
-                wordInfo.setText(kanji);
-            });
-
-
+            requireActivity().runOnUiThread(this::setAdapter);
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    private void setAdapter(){
+        adapter = new DictionaryRecyclerAdapter(dictionaryEntries);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
+        recycler.setLayoutManager(layoutManager);
+        recycler.setItemAnimator(new DefaultItemAnimator());
+        recycler.setAdapter(adapter);
     }
 }
