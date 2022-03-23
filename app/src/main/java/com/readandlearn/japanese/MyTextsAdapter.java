@@ -1,6 +1,7 @@
 package com.readandlearn.japanese;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,8 +42,9 @@ public class MyTextsAdapter extends RecyclerView.Adapter<MyTextsAdapter.MylistAd
         holder.title.setText(TITLES.get(holder.getAdapterPosition()));
         holder.card.setOnClickListener(v -> {
               fileName = DATA_TO_DISPLAY.get(holder.getAdapterPosition());
-//            Intent myIntent = new Intent(v.getContext(), ReadingScreen.class);
-//            startActivity(myIntent);
+            Intent myIntent = new Intent(v.getContext(), ReadingScreen.class);
+            myIntent.putExtra("filename", fileName);
+            context.startActivity(myIntent);
         });
             holder.card.setOnLongClickListener(v -> {
                 fileName = DATA_TO_DISPLAY.get(holder.getAdapterPosition());

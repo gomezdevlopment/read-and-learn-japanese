@@ -24,6 +24,11 @@
         <activity android:name=".UploadTextActivity" android:parentActivityName=".MainActivity">
 
         </activity>
+
+        <activity android:name=".ReadingScreen" android:parentActivityName=".MainActivity">
+
+        </activity>
+
     </application>
 
 </manifest>
