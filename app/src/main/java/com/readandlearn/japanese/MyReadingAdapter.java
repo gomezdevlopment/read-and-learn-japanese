@@ -10,26 +10,32 @@ import android.text.SpannableStringBuilder;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.util.TypedValue;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class MyReadingAdapter extends RecyclerView.Adapter<MyReadingAdapter.MylistAdapterVh>{
+public class MyReadingAdapter extends RecyclerView.Adapter<MyReadingAdapter.MylistAdapterVh> {
     private final Context CONTEXT;
     private final ArrayList<String> PLAIN_LINES;
     private Dialog definitionDialog;
@@ -67,12 +73,43 @@ public class MyReadingAdapter extends RecyclerView.Adapter<MyReadingAdapter.Myli
         public MylistAdapterVh(@NonNull View itemView) {
             super(itemView);
             textBox = itemView.findViewById(R.id.recyclerTextView);
-            textBox.setHighlightColor(Color.TRANSPARENT);
             float fontSize = 30f;
             textBox.setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSize);
             textBox.setMovementMethod(LinkMovementMethod.getInstance());
+            textBox.setCustomSelectionActionModeCallback(new ActionMode.Callback() {
+                @Override
+                public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
+                    menu.add(0, 0, 0, "Define");
+                    return true;
+                }
+
+                @Override
+                public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
+                    return false;
+                }
+
+                @Override
+                public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
+                    String text = "";
+                    switch (menuItem.getItemId()) {
+                        case 0:
+                            text = textBox.getText().toString().substring(textBox.getSelectionStart(), textBox.getSelectionEnd());
+                            System.out.println(text);
+                    }
+                    if(!text.isEmpty()){
+                        showDefinitionPopUp(text, definitionDialog, textBox);
+                    }
+                    return false;
+                }
+
+                @Override
+                public void onDestroyActionMode(ActionMode actionMode) {
+
+                }
+            });
         }
     }
+
 
     public SpannableStringBuilder createHighlightsBackground(String text) {
         SpannableStringBuilder sb = new SpannableStringBuilder("");
@@ -162,9 +199,12 @@ public class MyReadingAdapter extends RecyclerView.Adapter<MyReadingAdapter.Myli
     private void searchDict(String word, RecyclerView recycler, ProgressBar progressCircle) {
         entries.clear();
         Thread thread = new Thread(() -> {
-            entries = parseJSON(queryJisho(word));
+            entries = parseJSON(queryJisho(word), word);
             Activity readingActivity = (Activity) CONTEXT;
             readingActivity.runOnUiThread(() -> {
+                if (entries.isEmpty()) {
+                    entries.add(new DictionaryEntry("Sorry, no definition was found.", "", ""));
+                }
                 setAdapter(recycler, entries);
                 progressCircle.setVisibility(View.INVISIBLE);
             });
@@ -201,7 +241,7 @@ public class MyReadingAdapter extends RecyclerView.Adapter<MyReadingAdapter.Myli
         return info.toString();
     }
 
-    private ArrayList<DictionaryEntry> parseJSON(String info) {
+    private ArrayList<DictionaryEntry> parseJSON(String info, String word) {
         ArrayList<DictionaryEntry> dictionaryEntries = new ArrayList<>();
         JSONObject data;
         JSONArray array;
@@ -246,9 +286,9 @@ public class MyReadingAdapter extends RecyclerView.Adapter<MyReadingAdapter.Myli
                     e.printStackTrace();
                 }
 
-                if (kanji.isEmpty() && !reading.isEmpty()) {
+                if (kanji.isEmpty() && !reading.isEmpty() && reading.equals(word)) {
                     dictionaryEntries.add(new DictionaryEntry(reading, "", String.valueOf(englishDefinitions)));
-                } else {
+                } else if (kanji.equals(word)) {
                     dictionaryEntries.add(new DictionaryEntry(kanji, reading, String.valueOf(englishDefinitions)));
                 }
             }
