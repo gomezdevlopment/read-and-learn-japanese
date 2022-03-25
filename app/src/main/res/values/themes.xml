@@ -6,7 +6,7 @@
         <item name="colorPrimaryVariant">@color/japanRed</item>
         <item name="colorOnPrimary">@color/japanWhite</item>
         <item name="android:windowBackground">@color/japanWhite</item>
-        <item name="android:textColorHighlight">@color/black</item>
+        <item name="android:textColorHighlight">@color/highlight</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/japanRed</item>
         <item name="colorSecondaryVariant">@color/japanRed</item>

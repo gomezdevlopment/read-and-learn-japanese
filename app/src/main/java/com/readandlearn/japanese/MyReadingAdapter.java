@@ -9,6 +9,7 @@ import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
+import android.text.style.ForegroundColorSpan;
 import android.util.TypedValue;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
@@ -19,20 +20,21 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
+import com.readandlearn.japanese.RoomDatabase.Word;
+import com.readandlearn.japanese.RoomDatabase.WordDatabase;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class MyReadingAdapter extends RecyclerView.Adapter<MyReadingAdapter.MylistAdapterVh> {
@@ -91,13 +93,11 @@ public class MyReadingAdapter extends RecyclerView.Adapter<MyReadingAdapter.Myli
                 @Override
                 public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
                     String text = "";
-                    switch (menuItem.getItemId()) {
-                        case 0:
-                            text = textBox.getText().toString().substring(textBox.getSelectionStart(), textBox.getSelectionEnd());
-                            System.out.println(text);
-                    }
-                    if(!text.isEmpty()){
-                        showDefinitionPopUp(text, definitionDialog, textBox);
+                    if (menuItem.getItemId() == 0) {
+                        text = textBox.getText().toString().substring(textBox.getSelectionStart(), textBox.getSelectionEnd());
+                        if (!text.isEmpty()) {
+                            showDefinitionPopUp(text, definitionDialog);
+                        }
                     }
                     return false;
                 }
@@ -112,47 +112,43 @@ public class MyReadingAdapter extends RecyclerView.Adapter<MyReadingAdapter.Myli
 
 
     public SpannableStringBuilder createHighlightsBackground(String text) {
-        SpannableStringBuilder sb = new SpannableStringBuilder("");
-        ArrayList<String> characters = new ArrayList<>();
-        for (int characterIndex = 0; characterIndex < text.length(); characterIndex++) {
-            characters.add(text.substring(characterIndex, characterIndex + 1));
-            characters.add(" ");
-        }
+        SpannableStringBuilder sb = new SpannableStringBuilder(text);
+        WordDatabase wordDatabase = WordDatabase.getInstance(CONTEXT);
+        List<Word> listOfWords = wordDatabase.wordDao().getWords();
 
-        for (String character : characters) {
-            if (!character.equals(" ")) {
-                SpannableString word = new SpannableString(character);
+        for (Word word : listOfWords) {
+            String wordName = word.getWord();
+            if (sb.toString().contains(wordName)) {
+                int index = sb.toString().indexOf(wordName);
+                SpannableString span = new SpannableString(wordName);
                 ClickableSpan newSpan = new ClickableSpan() {
                     @Override
                     public void onClick(@NonNull View view) {
                         SpannableString s;
                         TextView tv = (TextView) view;
-                        tv.setMovementMethod(null);
                         s = SpannableString.valueOf(tv.getText());
                         int start = s.getSpanStart(this);
                         int end = s.getSpanEnd(this);
                         String word = s.subSequence(start, end).toString();
                         definitionDialog = new Dialog(CONTEXT);
-                        showDefinitionPopUp(word, definitionDialog, tv);
+                        showDefinitionPopUp(word, definitionDialog);
                     }
                 };
-                word.setSpan(newSpan, 0, word.length(), SpannableString.SPAN_INCLUSIVE_EXCLUSIVE);
-//                if (UNKNOWN_WORDS.contains((word.toString().toLowerCase()))) {
-//                    word.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.japanRed)), 0, word.length(), SpannableString.SPAN_INCLUSIVE_EXCLUSIVE);
-//                } else if (KNOWN_WORDS.contains(word.toString().toLowerCase())) {
-//                    word.setSpan(new ForegroundColorSpan(Color.BLACK), 0, word.length(), SpannableString.SPAN_INCLUSIVE_EXCLUSIVE);
-//                } else {
-//                    word.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.samuraiBlue)), 0, word.length(), SpannableString.SPAN_INCLUSIVE_EXCLUSIVE);
-//                }
-                sb.append(word);
-            } else {
-                sb.append("");
+                span.setSpan(newSpan, 0, span.length(), SpannableString.SPAN_INCLUSIVE_EXCLUSIVE);
+                if (word.getStatus().equals("unknown")) {
+                    span.setSpan(new ForegroundColorSpan(ContextCompat.getColor(CONTEXT, R.color.japanRed)), 0, span.length(), SpannableString.SPAN_INCLUSIVE_EXCLUSIVE);
+                } else if (word.getStatus().equals("known")) {
+                    span.setSpan(new ForegroundColorSpan(ContextCompat.getColor(CONTEXT, R.color.blue)), 0, span.length(), SpannableString.SPAN_INCLUSIVE_EXCLUSIVE);
+                }
+                sb.replace(index, index+wordName.length(), span);
             }
         }
         return sb;
     }
 
-    public void showDefinitionPopUp(String word, Dialog dialog, TextView tv) {
+
+    public void showDefinitionPopUp(String string, Dialog dialog) {
+        String word = string.replaceAll("\\s+", "");
         final Dialog DIALOG = dialog;
         float dimAmount = (float) .4;
         DIALOG.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
@@ -167,24 +163,43 @@ public class MyReadingAdapter extends RecyclerView.Adapter<MyReadingAdapter.Myli
         RecyclerView recycler = DIALOG.findViewById(R.id.popupRecycler);
         ProgressBar progressCircle = DIALOG.findViewById(R.id.progressCircle);
 
+        WordDatabase wordDatabase = WordDatabase.getInstance(CONTEXT);
+        List<Word> words = wordDatabase.wordDao().getWords();
+        ArrayList<String> wordNames = new ArrayList<>();
+        for(Word word1: words){
+            wordNames.add(word1.getWord());
+        }
+
         DIALOG.show();
         wordToDefine.setText(word);
+        known.setEnabled(false);
+        unknown.setEnabled(false);
         setAdapter(recycler, entries);
-        searchDict(word, recycler, progressCircle);
+        searchDict(word, recycler, progressCircle, known, unknown);
+
         unknown.setOnClickListener(v -> {
+            if(wordNames.contains(word)){
+                if(wordDatabase.wordDao().getWord(word).getStatus().equals("known")){
+                    wordDatabase.wordDao().updateWordStatus("unknown", word);
+                }
+            }else{
+                wordDatabase.wordDao().insertWord(new Word(word, entries.get(0).getDefinitions(), "unknown"));
+            }
             DIALOG.dismiss();
-            tv.setMovementMethod(LinkMovementMethod.getInstance());
         });
 
         known.setOnClickListener(v -> {
+            if(wordNames.contains(word)){
+                if(wordDatabase.wordDao().getWord(word).getStatus().equals("unknown")){
+                    wordDatabase.wordDao().updateWordStatus("known", word);
+                }
+            }else{
+                wordDatabase.wordDao().insertWord(new Word(word, entries.get(0).getDefinitions(), "known"));
+            }
             DIALOG.dismiss();
-            tv.setMovementMethod(LinkMovementMethod.getInstance());
         });
 
-        close.setOnClickListener(v -> {
-            DIALOG.dismiss();
-            tv.setMovementMethod(LinkMovementMethod.getInstance());
-        });
+        close.setOnClickListener(v -> DIALOG.dismiss());
 
     }
 
@@ -196,7 +211,7 @@ public class MyReadingAdapter extends RecyclerView.Adapter<MyReadingAdapter.Myli
         recycler.setAdapter(adapter);
     }
 
-    private void searchDict(String word, RecyclerView recycler, ProgressBar progressCircle) {
+    private void searchDict(String word, RecyclerView recycler, ProgressBar progressCircle, Button known, Button unknown) {
         entries.clear();
         Thread thread = new Thread(() -> {
             entries = parseJSON(queryJisho(word), word);
@@ -207,6 +222,8 @@ public class MyReadingAdapter extends RecyclerView.Adapter<MyReadingAdapter.Myli
                 }
                 setAdapter(recycler, entries);
                 progressCircle.setVisibility(View.INVISIBLE);
+                known.setEnabled(true);
+                unknown.setEnabled(true);
             });
         });
         thread.start();
