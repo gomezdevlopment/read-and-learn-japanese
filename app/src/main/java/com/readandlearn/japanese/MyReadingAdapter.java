@@ -7,9 +7,9 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
+import android.text.TextPaint;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
-import android.text.style.ForegroundColorSpan;
 import android.util.TypedValue;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
@@ -97,6 +97,7 @@ public class MyReadingAdapter extends RecyclerView.Adapter<MyReadingAdapter.Myli
                         text = textBox.getText().toString().substring(textBox.getSelectionStart(), textBox.getSelectionEnd());
                         if (!text.isEmpty()) {
                             showDefinitionPopUp(text, definitionDialog);
+                            onDestroyActionMode(actionMode);
                         }
                     }
                     return false;
@@ -115,32 +116,98 @@ public class MyReadingAdapter extends RecyclerView.Adapter<MyReadingAdapter.Myli
         SpannableStringBuilder sb = new SpannableStringBuilder(text);
         WordDatabase wordDatabase = WordDatabase.getInstance(CONTEXT);
         List<Word> listOfWords = wordDatabase.wordDao().getWords();
+        List<String> wordNames = new ArrayList<>();
 
-        for (Word word : listOfWords) {
-            String wordName = word.getWord();
+        for(Word word : listOfWords){
+            wordNames.add(word.getWord());
+        }
+
+        //Sort Words by length
+        for (int i=1; i<wordNames.size(); i++)
+        {
+            String temp = wordNames.get(i);
+            int j = i - 1;
+            while (j >= 0 && temp.length() > wordNames.get(j).length())
+            {
+                wordNames.set(j + 1, wordNames.get(j));
+                j--;
+            }
+            wordNames.set(j + 1, temp);
+        }
+
+        ArrayList<int[]> spanRanges = new ArrayList<>();
+
+
+        for (String wordName : wordNames) {
             if (sb.toString().contains(wordName)) {
-                int index = sb.toString().indexOf(wordName);
-                SpannableString span = new SpannableString(wordName);
-                ClickableSpan newSpan = new ClickableSpan() {
-                    @Override
-                    public void onClick(@NonNull View view) {
-                        SpannableString s;
-                        TextView tv = (TextView) view;
-                        s = SpannableString.valueOf(tv.getText());
-                        int start = s.getSpanStart(this);
-                        int end = s.getSpanEnd(this);
-                        String word = s.subSequence(start, end).toString();
-                        definitionDialog = new Dialog(CONTEXT);
-                        showDefinitionPopUp(word, definitionDialog);
+                ArrayList<int[]> wordIndices = new ArrayList<>();
+                int index = text.indexOf(wordName);
+                int indexEnd = index+wordName.length();
+                wordIndices.add(new int[]{index, indexEnd});
+                while(index >= 0) {
+                    index = text.indexOf(wordName, index+1);
+                    indexEnd = index+wordName.length();
+                    if(index >= 0){
+                        wordIndices.add(new int[]{index, indexEnd});
                     }
-                };
-                span.setSpan(newSpan, 0, span.length(), SpannableString.SPAN_INCLUSIVE_EXCLUSIVE);
-                if (word.getStatus().equals("unknown")) {
-                    span.setSpan(new ForegroundColorSpan(ContextCompat.getColor(CONTEXT, R.color.japanRed)), 0, span.length(), SpannableString.SPAN_INCLUSIVE_EXCLUSIVE);
-                } else if (word.getStatus().equals("known")) {
-                    span.setSpan(new ForegroundColorSpan(ContextCompat.getColor(CONTEXT, R.color.blue)), 0, span.length(), SpannableString.SPAN_INCLUSIVE_EXCLUSIVE);
                 }
-                sb.replace(index, index+wordName.length(), span);
+
+                for(int[] indices: wordIndices){
+                    SpannableString span = new SpannableString(wordName);
+                    Word word = wordDatabase.wordDao().getWord(wordName);
+                    int spanColor = ContextCompat.getColor(CONTEXT, R.color.black);
+                    if (word.getStatus().equals("unknown")) {
+                        spanColor = ContextCompat.getColor(CONTEXT, R.color.japanRed);
+                    } else if (word.getStatus().equals("known")) {
+                        spanColor = ContextCompat.getColor(CONTEXT, R.color.blue);
+                    }
+                    int finalSpanColor = spanColor;
+                    ClickableSpan newSpan = new ClickableSpan() {
+                        @Override
+                        public void updateDrawState(TextPaint ds) {
+                            super.updateDrawState(ds);
+                            ds.setColor(finalSpanColor);
+                            ds.setUnderlineText(true);
+                        }
+
+                        @Override
+                        public void onClick(@NonNull View view) {
+                            SpannableString s;
+                            TextView tv = (TextView) view;
+                            s = SpannableString.valueOf(tv.getText());
+                            int start = s.getSpanStart(this);
+                            int end = s.getSpanEnd(this);
+                            String word = s.subSequence(start, end).toString();
+                            definitionDialog = new Dialog(CONTEXT);
+                            showDefinitionPopUp(word, definitionDialog);
+                        }
+                    };
+
+                    span.setSpan(newSpan, 0, wordName.length(), SpannableString.SPAN_INCLUSIVE_EXCLUSIVE);
+                    int[] newIndices = null;
+                    index = indices[0];
+                    indexEnd = indices[1];
+
+                    if(!spanRanges.isEmpty()){
+                        boolean overlap = false;
+                        for(int[] indicesArray: spanRanges){
+                            if (index <= indicesArray[1] && indexEnd >= indicesArray[0]) {
+                                overlap = true;
+                                break;
+                            }
+                        }
+                        if(!overlap){
+                            sb.replace(index, indexEnd, span);
+                            newIndices = new int[]{index, indexEnd};
+                        }
+                    }else{
+                        sb.replace(index, indexEnd, span);
+                        spanRanges.add(new int[]{index, indexEnd});
+                    }
+                    if(newIndices!=null){
+                        spanRanges.add(new int[]{index, indexEnd});
+                    }
+                }
             }
         }
         return sb;
