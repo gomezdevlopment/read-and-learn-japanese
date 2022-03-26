@@ -87,14 +87,24 @@ public class MyReadingAdapter extends RecyclerView.Adapter<MyReadingAdapter.Myli
 
                 @Override
                 public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
+                    textBox.setLongClickable(false);
+                    textBox.setClickable(false);
                     return false;
                 }
 
                 @Override
                 public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
-                    String text = "";
+                    String text;
                     if (menuItem.getItemId() == 0) {
-                        text = textBox.getText().toString().substring(textBox.getSelectionStart(), textBox.getSelectionEnd());
+                        int min = 0;
+                        int max = textBox.getText().length();
+                        if (textBox.isFocused()) {
+                            final int selStart = textBox.getSelectionStart();
+                            final int selEnd = textBox.getSelectionEnd();
+                            min = Math.max(0, Math.min(selStart, selEnd));
+                            max = Math.max(0, Math.max(selStart, selEnd));
+                        }
+                        text = textBox.getText().toString().substring(min, max);
                         if (!text.isEmpty()) {
                             showDefinitionPopUp(text, definitionDialog);
                             onDestroyActionMode(actionMode);
@@ -105,7 +115,8 @@ public class MyReadingAdapter extends RecyclerView.Adapter<MyReadingAdapter.Myli
 
                 @Override
                 public void onDestroyActionMode(ActionMode actionMode) {
-
+                    textBox.setLongClickable(true);
+                    textBox.setClickable(true);
                 }
             });
         }

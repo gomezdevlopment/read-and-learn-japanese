@@ -5,16 +5,18 @@
       <map>
         <entry key="..\:/Users/batmi/Desktop/ReadAndLearnJapanese/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.1965" />
         <entry key="..\:/Users/batmi/Desktop/ReadAndLearnJapanese/app/src/main/res/drawable/ic_launcher_background.xml" value="0.1965" />
-        <entry key="..\:/Users/batmi/Desktop/ReadAndLearnJapanese/app/src/main/res/layout/activity_main.xml" value="0.18854166666666666" />
+        <entry key="..\:/Users/batmi/Desktop/ReadAndLearnJapanese/app/src/main/res/layout/activity_main.xml" value="0.2" />
         <entry key="..\:/Users/batmi/Desktop/ReadAndLearnJapanese/app/src/main/res/layout/dictionary_entry.xml" value="0.5" />
         <entry key="..\:/Users/batmi/Desktop/ReadAndLearnJapanese/app/src/main/res/layout/fragment_home.xml" value="0.25" />
         <entry key="..\:/Users/batmi/Desktop/ReadAndLearnJapanese/app/src/main/res/layout/fragment_learn.xml" value="0.18854166666666666" />
+        <entry key="..\:/Users/batmi/Desktop/ReadAndLearnJapanese/app/src/main/res/layout/fragment_study.xml" value="0.1765625" />
         <entry key="..\:/Users/batmi/Desktop/ReadAndLearnJapanese/app/src/main/res/layout/fragment_translate.xml" value="0.3770833333333333" />
         <entry key="..\:/Users/batmi/Desktop/ReadAndLearnJapanese/app/src/main/res/layout/popup_window.xml" value="0.33" />
         <entry key="..\:/Users/batmi/Desktop/ReadAndLearnJapanese/app/src/main/res/layout/reading_screen.xml" value="0.18645833333333334" />
         <entry key="..\:/Users/batmi/Desktop/ReadAndLearnJapanese/app/src/main/res/layout/text_list.xml" value="0.18645833333333334" />
         <entry key="..\:/Users/batmi/Desktop/ReadAndLearnJapanese/app/src/main/res/layout/text_recycler.xml" value="0.18645833333333334" />
         <entry key="..\:/Users/batmi/Desktop/ReadAndLearnJapanese/app/src/main/res/layout/upload_text.xml" value="0.22" />
+        <entry key="..\:/Users/batmi/Desktop/ReadAndLearnJapanese/app/src/main/res/menu/main_menu.xml" value="0.17395833333333333" />
         <entry key="..\:/Users/batmi/Desktop/ReadAndLearnJapanese/app/src/main/res/menu/nav_menu.xml" value="0.18854166666666666" />
       </map>
     </option>

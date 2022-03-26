@@ -13,4 +13,6 @@
     <color name="samuraiBlue">#26558B</color>
     <color name="blue">#1F7EEC</color>
     <color name="highlight">#A2FFC4</color>
+    <color name="nightIconTint">#FFFFFF</color>
+    <color name="darkModeBG">#2C2323</color>
 </resources>
