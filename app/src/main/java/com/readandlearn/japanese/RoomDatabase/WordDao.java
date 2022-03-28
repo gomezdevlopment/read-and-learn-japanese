@@ -13,6 +13,9 @@ public interface WordDao {
     @Query("SELECT * FROM words")
     List<Word> getWords();
 
+    @Query("SELECT * FROM words WHERE status = 'unknown'")
+    List<Word> getUnknownWords();
+
     @Insert
     void insertWord(Word word);
 

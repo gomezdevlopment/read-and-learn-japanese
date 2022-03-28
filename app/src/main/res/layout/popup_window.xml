@@ -12,7 +12,7 @@
         android:layout_height="match_parent"
         android:layout_gravity="center"
         android:layout_marginTop="75dp"
-        app:cardCornerRadius="10dp"
+        app:cardCornerRadius="15dp"
         app:cardPreventCornerOverlap="true"
         app:cardUseCompatPadding="true">
 
@@ -24,11 +24,10 @@
                 android:id="@+id/knownButton"
                 android:layout_width="wrap_content"
                 android:layout_height="48dp"
-                android:layout_marginEnd="10dp"
                 android:backgroundTint="@color/samuraiBlue"
                 android:text="Known"
                 android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/wordBox"
                 app:layout_constraintTop_toTopOf="@+id/closeButton" />
 
             <Button
@@ -49,10 +48,10 @@
                 android:id="@+id/unknownButton"
                 android:layout_width="wrap_content"
                 android:layout_height="48dp"
-                android:layout_marginStart="10dp"
                 android:text="Learn"
                 android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
+                android:backgroundTint="@color/japanRed"
+                app:layout_constraintStart_toStartOf="@+id/wordBox"
                 app:layout_constraintTop_toTopOf="@+id/closeButton" />
 
             <TextView

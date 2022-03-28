@@ -20,7 +20,6 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static DisplayMetrics displayMetrics;
     SharedPreferences preferences;
     boolean nightMode;
     @Override
@@ -44,8 +43,6 @@ public class MainActivity extends AppCompatActivity {
         } else {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
         }
-
-        displayMetrics = this.getResources().getDisplayMetrics();
     }
 
     @Override
