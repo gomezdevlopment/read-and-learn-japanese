@@ -5,26 +5,20 @@ import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.text.Layout;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.TextPaint;
 import android.text.method.ArrowKeyMovementMethod;
-import android.text.method.BaseMovementMethod;
 import android.text.method.LinkMovementMethod;
-import android.text.method.MovementMethod;
-import android.text.method.ScrollingMovementMethod;
 import android.text.style.ClickableSpan;
 import android.util.TypedValue;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
@@ -38,7 +32,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.IOException;
-import java.lang.invoke.MethodHandle;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -268,7 +261,7 @@ public class MyReadingAdapter extends RecyclerView.Adapter<MyReadingAdapter.Myli
                     wordDatabase.wordDao().updateWordStatus("unknown", word);
                 }
             }else{
-                wordDatabase.wordDao().insertWord(new Word(word, entries.get(0).getDefinitions(), "unknown"));
+                wordDatabase.wordDao().insertWord(new Word(word, entries.get(0).getReading(), entries.get(0).getDefinitions(), "unknown"));
             }
             DIALOG.dismiss();
         });
@@ -279,7 +272,7 @@ public class MyReadingAdapter extends RecyclerView.Adapter<MyReadingAdapter.Myli
                     wordDatabase.wordDao().updateWordStatus("known", word);
                 }
             }else{
-                wordDatabase.wordDao().insertWord(new Word(word, entries.get(0).getDefinitions(), "known"));
+                wordDatabase.wordDao().insertWord(new Word(word, entries.get(0).getReading(), entries.get(0).getDefinitions(), "known"));
             }
             DIALOG.dismiss();
         });

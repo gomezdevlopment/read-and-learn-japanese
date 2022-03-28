@@ -13,12 +13,21 @@ public class Word {
 
     private String definition;
 
+    private String reading;
+
     private String status;
 
-    public Word(@NonNull String word, String definition, String status){
+    private int studyInterval;
+
+    private int dueDate;
+
+    public Word(@NonNull String word, String reading, String definition, String status){
         this.word = word;
         this.definition = definition;
         this.status = status;
+        this.reading = reading;
+        this.studyInterval = 1;
+        this.dueDate = 1;
     }
 
     @NonNull
@@ -32,5 +41,25 @@ public class Word {
 
     public String getStatus() {
         return status;
+    }
+
+    public String getReading() {
+        return reading;
+    }
+
+    public int getStudyInterval() {
+        return studyInterval;
+    }
+
+    public int getDueDate() {
+        return dueDate;
+    }
+
+    public void setStudyInterval(int studyInterval) {
+        this.studyInterval = studyInterval;
+    }
+
+    public void setDueDate(int dueDate) {
+        this.dueDate = dueDate;
     }
 }
