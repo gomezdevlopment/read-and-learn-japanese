@@ -15,6 +15,7 @@
         android:layout_marginBottom="0dp"
         android:clickable="true"
         android:focusable="true"
+        app:cardBackgroundColor="@color/background"
         app:cardCornerRadius="0dp"
         app:cardPreventCornerOverlap="true"
         app:cardUseCompatPadding="true">

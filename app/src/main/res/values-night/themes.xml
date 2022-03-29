@@ -1,12 +1,42 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Theme.ReadAndLearnJapanese" parent="Theme.Material3.DayNight">
-        <!-- Primary brand color. -->
+        <item name="colorPrimarySurface">@color/black</item>
 
-        <!-- Secondary brand color. -->
+        <item name="colorContainer">@color/black</item>
 
-        <!-- Status bar color. -->
+        <item name="colorPrimary">@color/japanRed</item>
 
-        <!-- Customize your theme here. -->
+        <item name="colorOnPrimary">@color/japanWhite</item>
+
+        <item name="colorPrimaryContainer">@color/japanRed</item>
+
+        <item name="colorOnPrimaryContainer">@color/japanWhite</item>
+
+        <item name="colorSecondary">@color/japanRed</item>
+
+        <item name="colorOnSecondary">@color/white</item>
+
+        <item name="colorSecondaryContainer">@color/japanRed</item>
+
+        <item name="colorOnSecondaryContainer">@color/japanWhite</item>
+
+        <item name="colorTertiary">@color/purple_200</item>
+
+        <item name="colorOnTertiary">@color/white</item>
+
+        <item name="colorTertiaryContainer">@color/japanRed</item>
+
+        <item name="colorOnTertiaryContainer">@color/japanWhite</item>
+
+        <item name="colorSurface">@color/japanRed</item>
+
+        <item name="colorOnSurface">@color/white</item>
+
+        <item name="colorSurfaceVariant">@color/white</item>
+
+        <item name="colorOnSurfaceVariant">@color/white</item>
+
+        <item name="colorOutline">@color/black</item>
     </style>
 </resources>

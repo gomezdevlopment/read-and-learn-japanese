@@ -9,10 +9,12 @@
     <color name="white">#FFFFFFFF</color>
 
     <color name="japanRed">#be0029</color>
-    <color name="japanWhite">#ffffff</color>
+    <color name="japanWhite">#FFFFFFFF</color>
     <color name="samuraiBlue">#26558B</color>
     <color name="blue">#1F7EEC</color>
     <color name="highlight">#A2FFC4</color>
     <color name="nightIconTint">#FFFFFF</color>
-    <color name="darkModeBG">#2C2323</color>
+    <color name="background">@color/japanWhite</color>
+
+    <color name="readingText">@color/black</color>
 </resources>
