@@ -41,8 +41,8 @@ public class Flashcard extends AppCompatActivity {
         List<Word> unknownWords = wordDatabase.wordDao().getUnknownWords();
 
         //Load flashcards
-        for(Word word: unknownWords){
-            if(word.getDueDate() <= date){
+        for (Word word : unknownWords) {
+            if (word.getDueDate() <= date) {
                 flashcards.add(word);
             }
         }
@@ -55,23 +55,23 @@ public class Flashcard extends AppCompatActivity {
         show = findViewById(R.id.showButton);
 
         good.setOnClickListener(v -> {
-            index+=1;
             String wordName = flashcards.get(index).getWord();
             int interval = flashcards.get(index).getStudyInterval();
             int newInterval = (int) (interval * 1.45);
             int newDate = date + newInterval;
             wordDatabase.wordDao().updateInterval(wordName, newInterval);
             wordDatabase.wordDao().updateDueDate(wordName, newDate);
+            index += 1;
             setFlashcard();
         });
 
         again.setOnClickListener(v -> {
             flashcards.add(flashcards.get(index));
-            index+=1;
             String wordName = flashcards.get(index).getWord();
             int interval = 1;
             int newInterval = (int) (interval * 1.45);
             wordDatabase.wordDao().updateInterval(wordName, newInterval);
+            index += 1;
             setFlashcard();
         });
 
@@ -85,21 +85,22 @@ public class Flashcard extends AppCompatActivity {
         setFlashcard();
     }
 
-    private void setFlashcard(){
+    private void setFlashcard() {
         reading.setText("");
         good.setVisibility(View.INVISIBLE);
         again.setVisibility(View.INVISIBLE);
-        if(index >= flashcards.size()){
+        back.setText("");
+        if (index >= flashcards.size()) {
             front.setText("No More Reviews");
-        }else{
+            show.setVisibility(View.INVISIBLE);
+        } else {
             show.setVisibility(View.VISIBLE);
             String word = flashcards.get(index).getWord();
             front.setText(word);
-            back.setText("");
         }
     }
 
-    private void revealAnswer(){
+    private void revealAnswer() {
         reading.setText(flashcards.get(index).getReading());
         back.setText(flashcards.get(index).getDefinition());
     }

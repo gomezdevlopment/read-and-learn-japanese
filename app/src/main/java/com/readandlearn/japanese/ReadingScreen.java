@@ -11,12 +11,9 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Objects;
 
-//implements TextToSpeech.OnInitListener
 public class ReadingScreen extends AppCompatActivity{
     private Dialog definitionDialog;
     private final ArrayList<String> PLAIN_STRINGS = new ArrayList<>();
-    private final ArrayList<String> KNOWN_WORDS = new ArrayList<>();
-    private final ArrayList<String> UNKNOWN_WORDS = new ArrayList<>();
     RecyclerView textRecyclerView;
     String fileName;
 
@@ -33,9 +30,6 @@ public class ReadingScreen extends AppCompatActivity{
 
         fileName = getIntent().getExtras().getString("filename");
         definitionDialog = new Dialog(ReadingScreen.this);
-
-        KNOWN_WORDS.clear();
-        UNKNOWN_WORDS.clear();
 
         loadText();
 
