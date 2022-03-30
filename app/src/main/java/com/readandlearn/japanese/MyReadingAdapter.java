@@ -262,7 +262,7 @@ public class MyReadingAdapter extends RecyclerView.Adapter<MyReadingAdapter.Myli
         wordToDefine.setText(word);
         known.setEnabled(false);
         unknown.setEnabled(false);
-        setAdapter(recycler, entries, new ArrayList<>());
+        setAdapter(recycler, entries, new ArrayList<>(), false);
         searchDict(word, recycler, progressCircle, known, unknown, wordAndReadings);
         unknown.setOnClickListener(v -> {
             ArrayList<Integer> indexesOfWordsToMarkUnknown = DictionaryRecyclerAdapter.getCheckedBoxes();
@@ -282,9 +282,12 @@ public class MyReadingAdapter extends RecyclerView.Adapter<MyReadingAdapter.Myli
         known.setOnClickListener(v -> {
             ArrayList<Integer> indexesOfWordsToMarkKnown = DictionaryRecyclerAdapter.getCheckedBoxes();
             for(int index: indexesOfWordsToMarkKnown){
+                System.out.println(indexesOfWordsToMarkKnown.size());
                 if(wordAndReadings.contains(entries.get(index).getKanjiAndReading())){
                     String wordAndReading = entries.get(index).getKanjiAndReading();
+                    System.out.println(wordAndReading);
                     if(wordDatabase.wordDao().getWordAndReading(wordAndReading).getStatus().equals("unknown")){
+                        System.out.println("Success");
                         wordDatabase.wordDao().updateWordStatus("known", wordAndReading);
                     }
                 }else{
@@ -303,7 +306,7 @@ public class MyReadingAdapter extends RecyclerView.Adapter<MyReadingAdapter.Myli
 
     }
 
-    private void setAdapter(RecyclerView recycler, ArrayList<DictionaryEntry> dictionaryEntries, ArrayList<Integer> flashcards) {
+    private void setAdapter(RecyclerView recycler, ArrayList<DictionaryEntry> dictionaryEntries, ArrayList<Integer> flashcards, boolean showCheckBox) {
         adapter = new DictionaryRecyclerAdapter(dictionaryEntries, true, flashcards);
         layoutManager = new LinearLayoutManager(recycler.getContext());
         recycler.setLayoutManager(layoutManager);
@@ -320,14 +323,15 @@ public class MyReadingAdapter extends RecyclerView.Adapter<MyReadingAdapter.Myli
             readingActivity.runOnUiThread(() -> {
                 if (entries.isEmpty()) {
                     entries.add(new DictionaryEntry("Sorry, no definition was found.", "", ""));
+                    setAdapter(recycler, entries, flashcards, false);
                 }else{
                     for(int i = 0; i<entries.size(); i++){
                         if(wordAndReadings.contains(entries.get(i).getKanjiAndReading())){
                             flashcards.add(i);
                         }
                     }
+                    setAdapter(recycler, entries, flashcards, true);
                 }
-                setAdapter(recycler, entries, flashcards);
                 progressCircle.setVisibility(View.INVISIBLE);
                 known.setEnabled(true);
                 unknown.setEnabled(true);
@@ -373,7 +377,7 @@ public class MyReadingAdapter extends RecyclerView.Adapter<MyReadingAdapter.Myli
         try {
             data = new JSONObject(info);
             array = data.getJSONArray("data");
-
+            int duplicateEntry = 1;
             for (int arrayIndex = 0; arrayIndex < array.length(); arrayIndex++) {
                 String kanji = "";
                 String reading = "";
@@ -411,7 +415,8 @@ public class MyReadingAdapter extends RecyclerView.Adapter<MyReadingAdapter.Myli
                 }
 
                 if (kanji.isEmpty() && !reading.isEmpty() && reading.equals(word)) {
-                    dictionaryEntries.add(new DictionaryEntry(reading, "", String.valueOf(englishDefinitions)));
+                    dictionaryEntries.add(new DictionaryEntry(reading, String.valueOf(duplicateEntry), String.valueOf(englishDefinitions)));
+                    duplicateEntry++;
                 } else if (kanji.equals(word)) {
                     dictionaryEntries.add(new DictionaryEntry(kanji, reading, String.valueOf(englishDefinitions)));
                 }

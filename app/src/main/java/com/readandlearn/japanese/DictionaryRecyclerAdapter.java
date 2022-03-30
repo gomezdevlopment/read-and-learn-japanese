@@ -17,12 +17,13 @@ public class DictionaryRecyclerAdapter extends RecyclerView.Adapter<DictionaryRe
     private boolean showCheckBox;
     private ArrayList<Integer> flashcards;
     public static int arraySize;
-    public static DictionaryRecyclerAdapter.DictionaryViewHolder holderReference;
+    private static ArrayList<CheckBox> checkBoxes;
 
     public DictionaryRecyclerAdapter(ArrayList<DictionaryEntry> dictionaryEntries, boolean showCheckBox, ArrayList<Integer> flashcards){
         this.dictionaryEntries = dictionaryEntries;
         this.showCheckBox = showCheckBox;
         this.flashcards = flashcards;
+        this.checkBoxes = new ArrayList<>();
         arraySize = dictionaryEntries.size();
     }
 
@@ -52,7 +53,6 @@ public class DictionaryRecyclerAdapter extends RecyclerView.Adapter<DictionaryRe
 
     @Override
     public void onBindViewHolder(@NonNull DictionaryRecyclerAdapter.DictionaryViewHolder holder, int position) {
-        holderReference = holder;
         String kanjiAndReading = dictionaryEntries.get(position).getKanjiAndReading();
         String kanjiString = dictionaryEntries.get(position).getKanji();
         String readingString = dictionaryEntries.get(position).getReading();
@@ -64,10 +64,12 @@ public class DictionaryRecyclerAdapter extends RecyclerView.Adapter<DictionaryRe
         if(position == 0){
             holder.checkBox.setChecked(true);
         }
-        
+
         if(flashcards.contains(position)){
             holder.checkBox.setVisibility(View.INVISIBLE);
         }
+
+        checkBoxes.add(holder.checkBox);
     }
 
     @Override
@@ -88,7 +90,7 @@ public class DictionaryRecyclerAdapter extends RecyclerView.Adapter<DictionaryRe
     public static ArrayList<Integer> getCheckedBoxes(){
         ArrayList<Integer> checkedBoxes = new ArrayList<>();
         for(int i = 0; i < arraySize; i++){
-            if(holderReference.checkBox.isChecked()){
+            if(checkBoxes.get(i).isChecked()){
                 checkedBoxes.add(i);
             }
         }
