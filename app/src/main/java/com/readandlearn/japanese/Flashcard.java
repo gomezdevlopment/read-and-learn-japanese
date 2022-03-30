@@ -55,22 +55,22 @@ public class Flashcard extends AppCompatActivity {
         show = findViewById(R.id.showButton);
 
         good.setOnClickListener(v -> {
-            String wordName = flashcards.get(index).getWord();
+            String wordAndReading = flashcards.get(index).getWordAndReading();
             int interval = flashcards.get(index).getStudyInterval();
             int newInterval = (int) (interval * 1.45);
             int newDate = date + newInterval;
-            wordDatabase.wordDao().updateInterval(wordName, newInterval);
-            wordDatabase.wordDao().updateDueDate(wordName, newDate);
+            wordDatabase.wordDao().updateInterval(wordAndReading, newInterval);
+            wordDatabase.wordDao().updateDueDate(wordAndReading, newDate);
             index += 1;
             setFlashcard();
         });
 
         again.setOnClickListener(v -> {
             flashcards.add(flashcards.get(index));
-            String wordName = flashcards.get(index).getWord();
+            String wordAndReading = flashcards.get(index).getWordAndReading();
             int interval = 1;
             int newInterval = (int) (interval * 1.45);
-            wordDatabase.wordDao().updateInterval(wordName, newInterval);
+            wordDatabase.wordDao().updateInterval(wordAndReading, newInterval);
             index += 1;
             setFlashcard();
         });

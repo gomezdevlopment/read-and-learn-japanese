@@ -4,11 +4,13 @@ public class DictionaryEntry {
     private String kanji;
     private String reading;
     private String definitions;
+    private final String kanjiAndReading;
 
     public DictionaryEntry(String kanji, String reading, String definitions){
         this.kanji = kanji;
         this.reading = reading;
         this.definitions = definitions;
+        this.kanjiAndReading = kanji+reading;
     }
 
     public String getKanji() {
@@ -35,4 +37,7 @@ public class DictionaryEntry {
         this.definitions = definitions;
     }
 
+    public String getKanjiAndReading() {
+        return kanjiAndReading;
+    }
 }

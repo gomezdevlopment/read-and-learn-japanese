@@ -47,7 +47,7 @@ public class StudyFragment extends Fragment {
             dictionaryEntries.add(new DictionaryEntry(word.getWord(), word.getReading(), word.getDefinition()));
         }
 
-        DictionaryRecyclerAdapter adapter = new DictionaryRecyclerAdapter(dictionaryEntries);
+        DictionaryRecyclerAdapter adapter = new DictionaryRecyclerAdapter(dictionaryEntries, false);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
         recycler.setLayoutManager(layoutManager);
         recycler.setItemAnimator(new DefaultItemAnimator());

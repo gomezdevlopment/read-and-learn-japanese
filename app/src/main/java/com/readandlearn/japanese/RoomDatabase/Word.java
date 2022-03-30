@@ -9,6 +9,8 @@ public class Word {
 
     @NonNull
     @PrimaryKey
+    private String wordAndReading;
+
     private String word;
 
     private String definition;
@@ -28,6 +30,7 @@ public class Word {
         this.reading = reading;
         this.studyInterval = 1;
         this.dueDate = 1;
+        this.wordAndReading = word + reading;
     }
 
     @NonNull
@@ -61,5 +64,14 @@ public class Word {
 
     public void setDueDate(int dueDate) {
         this.dueDate = dueDate;
+    }
+
+    @NonNull
+    public String getWordAndReading() {
+        return wordAndReading;
+    }
+
+    public void setWordAndReading(@NonNull String wordAndReading) {
+        this.wordAndReading = wordAndReading;
     }
 }

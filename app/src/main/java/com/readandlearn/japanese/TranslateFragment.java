@@ -192,7 +192,7 @@ public class TranslateFragment extends Fragment {
     }
 
     private void setAdapter(){
-        adapter = new DictionaryRecyclerAdapter(dictionaryEntries);
+        adapter = new DictionaryRecyclerAdapter(dictionaryEntries, false);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
         recycler.setLayoutManager(layoutManager);
         recycler.setItemAnimator(new DefaultItemAnimator());

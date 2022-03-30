@@ -39,4 +39,14 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/kanji"
         app:layout_constraintTop_toBottomOf="@+id/kanji" />
+
+    <CheckBox
+        android:id="@+id/checkBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp"
+        android:text="Make Flashcard"
+        app:layout_constraintBottom_toBottomOf="@+id/kanji"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/kanji" />
 </androidx.constraintlayout.widget.ConstraintLayout>

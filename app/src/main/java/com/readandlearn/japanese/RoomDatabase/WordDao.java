@@ -22,19 +22,19 @@ public interface WordDao {
     @Delete
     void deleteWord(Word word);
 
-    @Query("UPDATE words SET status= :status WHERE word = :word")
-    void updateWordStatus(String status, String word);
+    @Query("UPDATE words SET status= :status WHERE wordAndReading = :wordAndReading")
+    void updateWordStatus(String status, String wordAndReading);
 
-    @Query("UPDATE words SET studyInterval= :interval WHERE word= :word")
-    void updateInterval(String word, int interval);
+    @Query("UPDATE words SET studyInterval= :interval WHERE wordAndReading= :wordAndReading")
+    void updateInterval(String wordAndReading, int interval);
 
-    @Query("UPDATE words SET dueDate= :dueDate WHERE word= :word")
-    void updateDueDate(String word, int dueDate);
-
-    @Query("SELECT * FROM words WHERE word= :word")
-    boolean ifWordExists(String word);
+    @Query("UPDATE words SET dueDate= :dueDate WHERE wordAndReading= :wordAndReading")
+    void updateDueDate(String wordAndReading, int dueDate);
 
     @Query("SELECT * FROM words WHERE word= :word")
     Word getWord(String word);
+
+    @Query("SELECT * FROM words WHERE wordAndReading= :wordAndReading")
+    Word getWordAndReading(String wordAndReading);
 
 }

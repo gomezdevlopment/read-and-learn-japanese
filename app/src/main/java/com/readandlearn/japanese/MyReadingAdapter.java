@@ -254,8 +254,10 @@ public class MyReadingAdapter extends RecyclerView.Adapter<MyReadingAdapter.Myli
         WordDatabase wordDatabase = WordDatabase.getInstance(CONTEXT);
         List<Word> words = wordDatabase.wordDao().getWords();
         ArrayList<String> wordNames = new ArrayList<>();
+        ArrayList<String> wordAndReadings = new ArrayList<>();
         for(Word word1: words){
             wordNames.add(word1.getWord());
+            wordAndReadings.add(word1.getWordAndReading());
         }
 
         DIALOG.show();
@@ -266,24 +268,33 @@ public class MyReadingAdapter extends RecyclerView.Adapter<MyReadingAdapter.Myli
         searchDict(word, recycler, progressCircle, known, unknown);
 
         unknown.setOnClickListener(v -> {
-            if(wordNames.contains(word)){
-                if(wordDatabase.wordDao().getWord(word).getStatus().equals("known")){
-                    wordDatabase.wordDao().updateWordStatus("unknown", word);
+            ArrayList<Integer> indexesOfWordsToMarkUnknown = DictionaryRecyclerAdapter.getCheckedBoxes();
+            for(int index: indexesOfWordsToMarkUnknown){
+                if(wordAndReadings.contains(entries.get(index).getKanjiAndReading())){
+                    String wordAndReading = entries.get(index).getKanjiAndReading();
+                    if(wordDatabase.wordDao().getWordAndReading(wordAndReading).getStatus().equals("known")){
+                        wordDatabase.wordDao().updateWordStatus("unknown", wordAndReading);
+                    }
+                }else{
+                    wordDatabase.wordDao().insertWord(new Word(word, entries.get(index).getReading(), entries.get(index).getDefinitions(), "unknown"));
                 }
-            }else{
-                wordDatabase.wordDao().insertWord(new Word(word, entries.get(0).getReading(), entries.get(0).getDefinitions(), "unknown"));
             }
             DIALOG.dismiss();
         });
 
         known.setOnClickListener(v -> {
-            if(wordNames.contains(word)){
-                if(wordDatabase.wordDao().getWord(word).getStatus().equals("unknown")){
-                    wordDatabase.wordDao().updateWordStatus("known", word);
+            ArrayList<Integer> indexesOfWordsToMarkKnown = DictionaryRecyclerAdapter.getCheckedBoxes();
+            for(int index: indexesOfWordsToMarkKnown){
+                if(wordAndReadings.contains(entries.get(index).getKanjiAndReading())){
+                    String wordAndReading = entries.get(index).getKanjiAndReading();
+                    if(wordDatabase.wordDao().getWordAndReading(wordAndReading).getStatus().equals("unknown")){
+                        wordDatabase.wordDao().updateWordStatus("known", wordAndReading);
+                    }
+                }else{
+                    wordDatabase.wordDao().insertWord(new Word(word, entries.get(index).getReading(), entries.get(index).getDefinitions(), "known"));
                 }
-            }else{
-                wordDatabase.wordDao().insertWord(new Word(word, entries.get(0).getReading(), entries.get(0).getDefinitions(), "known"));
             }
+
             DIALOG.dismiss();
         });
 
@@ -296,7 +307,7 @@ public class MyReadingAdapter extends RecyclerView.Adapter<MyReadingAdapter.Myli
     }
 
     private void setAdapter(RecyclerView recycler, ArrayList<DictionaryEntry> dictionaryEntries) {
-        adapter = new DictionaryRecyclerAdapter(dictionaryEntries);
+        adapter = new DictionaryRecyclerAdapter(dictionaryEntries, true);
         layoutManager = new LinearLayoutManager(recycler.getContext());
         recycler.setLayoutManager(layoutManager);
         recycler.setItemAnimator(new DefaultItemAnimator());
@@ -362,7 +373,7 @@ public class MyReadingAdapter extends RecyclerView.Adapter<MyReadingAdapter.Myli
             for (int arrayIndex = 0; arrayIndex < array.length(); arrayIndex++) {
                 String kanji = "";
                 String reading = "";
-                StringBuilder englishDefinitions = new StringBuilder("");
+                StringBuilder englishDefinitions = new StringBuilder();
 
                 try {
                     kanji = array.getJSONObject(arrayIndex).getJSONArray("japanese").getJSONObject(0).getString("word");

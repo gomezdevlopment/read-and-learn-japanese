@@ -3,6 +3,7 @@ package com.readandlearn.japanese;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -13,22 +14,31 @@ import java.util.ArrayList;
 public class DictionaryRecyclerAdapter extends RecyclerView.Adapter<DictionaryRecyclerAdapter.DictionaryViewHolder> {
 
     private ArrayList<DictionaryEntry> dictionaryEntries;
+    private boolean showCheckBox;
+    public static int arraySize;
+    public static DictionaryRecyclerAdapter.DictionaryViewHolder holderReference;
 
-    public DictionaryRecyclerAdapter(ArrayList<DictionaryEntry> dictionaryEntries){
+    public DictionaryRecyclerAdapter(ArrayList<DictionaryEntry> dictionaryEntries, boolean showCheckBox){
         this.dictionaryEntries = dictionaryEntries;
+        this.showCheckBox = showCheckBox;
+        arraySize = dictionaryEntries.size();
     }
 
     public class DictionaryViewHolder extends RecyclerView.ViewHolder{
         private TextView kanji;
         private TextView reading;
         private TextView englishDefinitions;
+        private CheckBox checkBox;
 
         public DictionaryViewHolder(final View view){
             super(view);
-
             kanji = view.findViewById(R.id.kanji);
             reading = view.findViewById(R.id.reading);
             englishDefinitions = view.findViewById(R.id.englishDefinitions);
+            checkBox = view.findViewById(R.id.checkBox);
+            if(!showCheckBox){
+                checkBox.setVisibility(View.INVISIBLE);
+            }
         }
     }
     @NonNull
@@ -40,13 +50,42 @@ public class DictionaryRecyclerAdapter extends RecyclerView.Adapter<DictionaryRe
 
     @Override
     public void onBindViewHolder(@NonNull DictionaryRecyclerAdapter.DictionaryViewHolder holder, int position) {
-        holder.kanji.setText(dictionaryEntries.get(position).getKanji());
-        holder.reading.setText(dictionaryEntries.get(position).getReading());
-        holder.englishDefinitions.setText(dictionaryEntries.get(position).getDefinitions());
+        holderReference = holder;
+        String kanjiAndReading = dictionaryEntries.get(position).getKanjiAndReading();
+        String kanjiString = dictionaryEntries.get(position).getKanji();
+        String readingString = dictionaryEntries.get(position).getReading();
+        String definitionString = dictionaryEntries.get(position).getDefinitions();
+        holder.kanji.setText(kanjiString);
+        holder.reading.setText(readingString);
+        holder.englishDefinitions.setText(definitionString);
+
+        if(position == 0){
+            holder.checkBox.setChecked(true);
+        }
     }
 
     @Override
     public int getItemCount() {
         return dictionaryEntries.size();
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return position;
+    }
+
+    public static ArrayList<Integer> getCheckedBoxes(){
+        ArrayList<Integer> checkedBoxes = new ArrayList<>();
+        for(int i = 0; i < arraySize; i++){
+            if(holderReference.checkBox.isChecked()){
+                checkedBoxes.add(i);
+            }
+        }
+        return checkedBoxes;
     }
 }
