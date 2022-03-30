@@ -66,7 +66,8 @@ public class DictionaryRecyclerAdapter extends RecyclerView.Adapter<DictionaryRe
         }
 
         if(flashcards.contains(position)){
-            holder.checkBox.setVisibility(View.INVISIBLE);
+            holder.checkBox.setVisibility(View.VISIBLE);
+            holder.checkBox.setText("");
         }
 
         checkBoxes.add(holder.checkBox);
