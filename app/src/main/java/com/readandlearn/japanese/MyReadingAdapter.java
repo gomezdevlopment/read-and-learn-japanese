@@ -31,6 +31,8 @@ import com.readandlearn.japanese.RoomDatabase.WordDatabase;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
+
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -79,49 +81,53 @@ public class MyReadingAdapter extends RecyclerView.Adapter<MyReadingAdapter.Myli
             float fontSize = 30f;
             textBox.setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSize);
             textBox.setMovementMethod(LinkMovementMethod.getInstance());
-            textBox.setCustomSelectionActionModeCallback(new ActionMode.Callback() {
-                @Override
-                public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
-                    menu.clear();
-                    menu.add(0, 0, 0, "Define");
-                    return true;
-                }
-
-                @Override
-                public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
-                    textBox.setMovementMethod(new ArrowKeyMovementMethod());
-                    return true;
-                }
-
-                @Override
-                public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
-                    String text;
-                    if (menuItem.getItemId() == 0) {
-                        int min = 0;
-                        int max = textBox.getText().length();
-                        if (textBox.isFocused()) {
-                            final int selStart = textBox.getSelectionStart();
-                            final int selEnd = textBox.getSelectionEnd();
-                            min = Math.max(0, Math.min(selStart, selEnd));
-                            max = Math.max(0, Math.max(selStart, selEnd));
-                        }
-                        text = textBox.getText().toString().substring(min, max);
-                        if (!text.isEmpty()) {
-                            showDefinitionPopUp(text, definitionDialog);
-                            actionMode.finish();
-                        }
-                    }
-                    return false;
-                }
-
-                @Override
-                public void onDestroyActionMode(ActionMode actionMode) {
-                    textBox.setMovementMethod(LinkMovementMethod.getInstance());
-                }
-            });
+            setCustomActionCallback(textBox);
         }
     }
 
+    private void setCustomActionCallback(TextView tv){
+        tv.setCustomSelectionActionModeCallback(new ActionMode.Callback() {
+            @Override
+            public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
+                menu.clear();
+                menu.add(0, 0, 0, "Define");
+                return true;
+            }
+
+            @Override
+            public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
+                tv.setMovementMethod(new ArrowKeyMovementMethod());
+                return true;
+            }
+
+            @Override
+            public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
+                String text;
+                if (menuItem.getItemId() == 0) {
+                    int min = 0;
+                    int max = tv.getText().length();
+                    if (tv.isFocused()) {
+                        final int selStart = tv.getSelectionStart();
+                        final int selEnd = tv.getSelectionEnd();
+                        min = Math.max(0, Math.min(selStart, selEnd));
+                        max = Math.max(0, Math.max(selStart, selEnd));
+                    }
+                    text = tv.getText().toString().substring(min, max);
+                    if (!text.isEmpty()) {
+                        showDefinitionPopUp(text, definitionDialog);
+                        actionMode.finish();
+                    }
+                }
+                return false;
+            }
+
+            @Override
+            public void onDestroyActionMode(ActionMode actionMode) {
+                tv.setMovementMethod(LinkMovementMethod.getInstance());
+            }
+        });
+
+    }
 
     public SpannableStringBuilder createHighlightsBackground(String text) {
         SpannableStringBuilder sb = new SpannableStringBuilder(text);
@@ -151,18 +157,7 @@ public class MyReadingAdapter extends RecyclerView.Adapter<MyReadingAdapter.Myli
 
         for (String wordName : wordNames) {
             if (sb.toString().contains(wordName)) {
-                ArrayList<int[]> wordIndices = new ArrayList<>();
-                int index = text.indexOf(wordName);
-                int indexEnd = index+wordName.length();
-                wordIndices.add(new int[]{index, indexEnd});
-                while(index >= 0) {
-                    index = text.indexOf(wordName, index+1);
-                    indexEnd = index+wordName.length();
-                    if(index >= 0){
-                        wordIndices.add(new int[]{index, indexEnd});
-                    }
-                }
-
+                ArrayList<int[]> wordIndices = findIndicesOfWord(text, wordName);
                 for(int[] indices: wordIndices){
                     SpannableString span = new SpannableString(wordName);
                     Word word = wordDatabase.wordDao().getWord(wordName);
@@ -196,13 +191,13 @@ public class MyReadingAdapter extends RecyclerView.Adapter<MyReadingAdapter.Myli
 
                     span.setSpan(newSpan, 0, wordName.length(), SpannableString.SPAN_INCLUSIVE_EXCLUSIVE);
                     int[] newIndices = null;
-                    index = indices[0];
-                    indexEnd = indices[1];
+                    int index = indices[0];
+                    int indexEnd = indices[1];
 
                     if(!spanRanges.isEmpty()){
                         boolean overlap = false;
                         for(int[] indicesArray: spanRanges){
-                            if (index <= indicesArray[1] && indexEnd >= indicesArray[0]) {
+                            if (index < indicesArray[1] && indexEnd > indicesArray[0]) {
                                 overlap = true;
                                 break;
                             }
@@ -222,6 +217,21 @@ public class MyReadingAdapter extends RecyclerView.Adapter<MyReadingAdapter.Myli
             }
         }
         return sb;
+    }
+
+    private ArrayList<int[]> findIndicesOfWord(String text, String wordName){
+        ArrayList<int[]> wordIndices = new ArrayList<>();
+        int index = text.indexOf(wordName);
+        int indexEnd = index+wordName.length();
+        wordIndices.add(new int[]{index, indexEnd});
+        while(index >= 0) {
+            index = text.indexOf(wordName, index+1);
+            indexEnd = index+wordName.length();
+            if(index >= 0){
+                wordIndices.add(new int[]{index, indexEnd});
+            }
+        }
+        return wordIndices;
     }
 
 
@@ -278,6 +288,10 @@ public class MyReadingAdapter extends RecyclerView.Adapter<MyReadingAdapter.Myli
         });
 
         close.setOnClickListener(v -> DIALOG.dismiss());
+
+        DIALOG.setOnDismissListener(v ->{
+            notifyItemRangeChanged(0, PLAIN_LINES.size());
+        });
 
     }
 
