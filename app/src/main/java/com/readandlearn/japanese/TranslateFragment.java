@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.TextView;
 import org.json.JSONArray;
@@ -29,6 +30,7 @@ public class TranslateFragment extends Fragment {
     RecyclerView recycler;
     DictionaryRecyclerAdapter adapter;
     TextView searchEnglish;
+    ProgressBar progressBar;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -50,6 +52,7 @@ public class TranslateFragment extends Fragment {
         dictionaryEntries = new ArrayList<>();
         recycler = view.findViewById(R.id.dictionaryRecycler);
         searchEnglish = view.findViewById(R.id.searchEnglish);
+        progressBar = view.findViewById(R.id.progressBar);
 
         searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -58,6 +61,8 @@ public class TranslateFragment extends Fragment {
                 char first = s.charAt(0);
                 char last = s.charAt(s.length()-1);
 
+                recycler.setAdapter(null);
+                progressBar.setVisibility(View.VISIBLE);
                 Thread thread = new Thread(() -> {
                     try  {
                         queryJisho(s, Character.compare(first, last) == 0 && Character.compare(first, '\"') == 0);
@@ -172,6 +177,7 @@ public class TranslateFragment extends Fragment {
             });
 
             requireActivity().runOnUiThread(() -> {
+                progressBar.setVisibility(View.INVISIBLE);
                 setAdapter();
                 Pattern p = Pattern.compile("[^a-zA-Z0-9]");
                 boolean hasSpecialChar = p.matcher(word).find();
