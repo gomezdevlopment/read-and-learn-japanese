@@ -15,12 +15,14 @@ public class DictionaryRecyclerAdapter extends RecyclerView.Adapter<DictionaryRe
 
     private ArrayList<DictionaryEntry> dictionaryEntries;
     private boolean showCheckBox;
+    private ArrayList<Integer> flashcards;
     public static int arraySize;
     public static DictionaryRecyclerAdapter.DictionaryViewHolder holderReference;
 
-    public DictionaryRecyclerAdapter(ArrayList<DictionaryEntry> dictionaryEntries, boolean showCheckBox){
+    public DictionaryRecyclerAdapter(ArrayList<DictionaryEntry> dictionaryEntries, boolean showCheckBox, ArrayList<Integer> flashcards){
         this.dictionaryEntries = dictionaryEntries;
         this.showCheckBox = showCheckBox;
+        this.flashcards = flashcards;
         arraySize = dictionaryEntries.size();
     }
 
@@ -61,6 +63,10 @@ public class DictionaryRecyclerAdapter extends RecyclerView.Adapter<DictionaryRe
 
         if(position == 0){
             holder.checkBox.setChecked(true);
+        }
+        
+        if(flashcards.contains(position)){
+            holder.checkBox.setVisibility(View.INVISIBLE);
         }
     }
 

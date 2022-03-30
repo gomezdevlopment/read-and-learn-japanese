@@ -253,10 +253,8 @@ public class MyReadingAdapter extends RecyclerView.Adapter<MyReadingAdapter.Myli
 
         WordDatabase wordDatabase = WordDatabase.getInstance(CONTEXT);
         List<Word> words = wordDatabase.wordDao().getWords();
-        ArrayList<String> wordNames = new ArrayList<>();
         ArrayList<String> wordAndReadings = new ArrayList<>();
         for(Word word1: words){
-            wordNames.add(word1.getWord());
             wordAndReadings.add(word1.getWordAndReading());
         }
 
@@ -264,9 +262,8 @@ public class MyReadingAdapter extends RecyclerView.Adapter<MyReadingAdapter.Myli
         wordToDefine.setText(word);
         known.setEnabled(false);
         unknown.setEnabled(false);
-        setAdapter(recycler, entries);
-        searchDict(word, recycler, progressCircle, known, unknown);
-
+        setAdapter(recycler, entries, new ArrayList<>());
+        searchDict(word, recycler, progressCircle, known, unknown, wordAndReadings);
         unknown.setOnClickListener(v -> {
             ArrayList<Integer> indexesOfWordsToMarkUnknown = DictionaryRecyclerAdapter.getCheckedBoxes();
             for(int index: indexesOfWordsToMarkUnknown){
@@ -306,24 +303,31 @@ public class MyReadingAdapter extends RecyclerView.Adapter<MyReadingAdapter.Myli
 
     }
 
-    private void setAdapter(RecyclerView recycler, ArrayList<DictionaryEntry> dictionaryEntries) {
-        adapter = new DictionaryRecyclerAdapter(dictionaryEntries, true);
+    private void setAdapter(RecyclerView recycler, ArrayList<DictionaryEntry> dictionaryEntries, ArrayList<Integer> flashcards) {
+        adapter = new DictionaryRecyclerAdapter(dictionaryEntries, true, flashcards);
         layoutManager = new LinearLayoutManager(recycler.getContext());
         recycler.setLayoutManager(layoutManager);
         recycler.setItemAnimator(new DefaultItemAnimator());
         recycler.setAdapter(adapter);
     }
 
-    private void searchDict(String word, RecyclerView recycler, ProgressBar progressCircle, Button known, Button unknown) {
+    private void searchDict(String word, RecyclerView recycler, ProgressBar progressCircle, Button known, Button unknown, ArrayList<String> wordAndReadings) {
         entries.clear();
+        ArrayList<Integer> flashcards = new ArrayList<>();
         Thread thread = new Thread(() -> {
             entries = parseJSON(queryJisho(word), word);
             Activity readingActivity = (Activity) CONTEXT;
             readingActivity.runOnUiThread(() -> {
                 if (entries.isEmpty()) {
                     entries.add(new DictionaryEntry("Sorry, no definition was found.", "", ""));
+                }else{
+                    for(int i = 0; i<entries.size(); i++){
+                        if(wordAndReadings.contains(entries.get(i).getKanjiAndReading())){
+                            flashcards.add(i);
+                        }
+                    }
                 }
-                setAdapter(recycler, entries);
+                setAdapter(recycler, entries, flashcards);
                 progressCircle.setVisibility(View.INVISIBLE);
                 known.setEnabled(true);
                 unknown.setEnabled(true);
