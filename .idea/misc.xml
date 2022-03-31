@@ -10,7 +10,7 @@
         <entry key="..\:/Users/batmi/Desktop/ReadAndLearnJapanese/app/src/main/res/layout/flashcard.xml" value="0.33" />
         <entry key="..\:/Users/batmi/Desktop/ReadAndLearnJapanese/app/src/main/res/layout/fragment_home.xml" value="0.25" />
         <entry key="..\:/Users/batmi/Desktop/ReadAndLearnJapanese/app/src/main/res/layout/fragment_learn.xml" value="0.18854166666666666" />
-        <entry key="..\:/Users/batmi/Desktop/ReadAndLearnJapanese/app/src/main/res/layout/fragment_study.xml" value="0.25" />
+        <entry key="..\:/Users/batmi/Desktop/ReadAndLearnJapanese/app/src/main/res/layout/fragment_study.xml" value="0.33" />
         <entry key="..\:/Users/batmi/Desktop/ReadAndLearnJapanese/app/src/main/res/layout/fragment_translate.xml" value="0.3770833333333333" />
         <entry key="..\:/Users/batmi/Desktop/ReadAndLearnJapanese/app/src/main/res/layout/popup_window.xml" value="0.25" />
         <entry key="..\:/Users/batmi/Desktop/ReadAndLearnJapanese/app/src/main/res/layout/reading_screen.xml" value="0.18645833333333334" />
@@ -19,6 +19,8 @@
         <entry key="..\:/Users/batmi/Desktop/ReadAndLearnJapanese/app/src/main/res/layout/upload_text.xml" value="0.22" />
         <entry key="..\:/Users/batmi/Desktop/ReadAndLearnJapanese/app/src/main/res/menu/main_menu.xml" value="0.17395833333333333" />
         <entry key="..\:/Users/batmi/Desktop/ReadAndLearnJapanese/app/src/main/res/menu/nav_menu.xml" value="0.18854166666666666" />
+        <entry key="..\:/Users/batmi/Desktop/ReadAndLearnJapanese/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.1225" />
+        <entry key="..\:/Users/batmi/Desktop/ReadAndLearnJapanese/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.1225" />
       </map>
     </option>
   </component>
