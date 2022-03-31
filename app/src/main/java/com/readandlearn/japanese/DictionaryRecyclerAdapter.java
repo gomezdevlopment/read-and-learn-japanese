@@ -70,6 +70,10 @@ public class DictionaryRecyclerAdapter extends RecyclerView.Adapter<DictionaryRe
             holder.checkBox.setText("");
         }
 
+        if(kanjiString.equals("Sorry, no definition was found.")){
+            holder.checkBox.setVisibility(View.INVISIBLE);
+        }
+
         checkBoxes.add(holder.checkBox);
     }
 

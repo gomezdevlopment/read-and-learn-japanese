@@ -324,6 +324,9 @@ public class MyReadingAdapter extends RecyclerView.Adapter<MyReadingAdapter.Myli
                 if (entries.isEmpty()) {
                     entries.add(new DictionaryEntry("Sorry, no definition was found.", "", ""));
                     setAdapter(recycler, entries, flashcards, false);
+                    known.setEnabled(false);
+                    unknown.setEnabled(false);
+
                 }else{
                     for(int i = 0; i<entries.size(); i++){
                         if(wordAndReadings.contains(entries.get(i).getKanjiAndReading())){
@@ -331,10 +334,10 @@ public class MyReadingAdapter extends RecyclerView.Adapter<MyReadingAdapter.Myli
                         }
                     }
                     setAdapter(recycler, entries, flashcards, true);
+                    known.setEnabled(true);
+                    unknown.setEnabled(true);
                 }
                 progressCircle.setVisibility(View.INVISIBLE);
-                known.setEnabled(true);
-                unknown.setEnabled(true);
             });
         });
         thread.start();
