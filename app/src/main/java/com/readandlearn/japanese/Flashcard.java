@@ -56,9 +56,9 @@ public class Flashcard extends AppCompatActivity {
 
         good.setOnClickListener(v -> {
             String wordAndReading = flashcards.get(index).getWordAndReading();
-            int interval = flashcards.get(index).getStudyInterval();
-            int newInterval = (int) (interval * 1.45);
-            int newDate = date + newInterval;
+            float interval = flashcards.get(index).getStudyInterval();
+            float newInterval = (float) (interval * 1.45);
+            int newDate = (int) (date + newInterval);
             wordDatabase.wordDao().updateInterval(wordAndReading, newInterval);
             wordDatabase.wordDao().updateDueDate(wordAndReading, newDate);
             index += 1;

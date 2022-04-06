@@ -26,7 +26,7 @@ public interface WordDao {
     void updateWordStatus(String status, String wordAndReading);
 
     @Query("UPDATE words SET studyInterval= :interval WHERE wordAndReading= :wordAndReading")
-    void updateInterval(String wordAndReading, int interval);
+    void updateInterval(String wordAndReading, float interval);
 
     @Query("UPDATE words SET dueDate= :dueDate WHERE wordAndReading= :wordAndReading")
     void updateDueDate(String wordAndReading, int dueDate);

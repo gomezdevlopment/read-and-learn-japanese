@@ -19,7 +19,7 @@ public class Word {
 
     private String status;
 
-    private int studyInterval;
+    private float studyInterval;
 
     private int dueDate;
 
@@ -50,7 +50,7 @@ public class Word {
         return reading;
     }
 
-    public int getStudyInterval() {
+    public float getStudyInterval() {
         return studyInterval;
     }
 
