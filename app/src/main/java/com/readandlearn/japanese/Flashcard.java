@@ -68,8 +68,8 @@ public class Flashcard extends AppCompatActivity {
         again.setOnClickListener(v -> {
             flashcards.add(flashcards.get(index));
             String wordAndReading = flashcards.get(index).getWordAndReading();
-            int interval = 1;
-            int newInterval = (int) (interval * 1.45);
+            float interval = 1;
+            float newInterval = (float) (interval * 1.45);
             wordDatabase.wordDao().updateInterval(wordAndReading, newInterval);
             index += 1;
             setFlashcard();
