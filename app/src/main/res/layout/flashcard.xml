@@ -25,7 +25,7 @@
         android:layout_marginBottom="20dp"
         android:text="Back"
         android:textSize="24sp"
-        app:layout_constraintBottom_toTopOf="@+id/showButton"
+        app:layout_constraintBottom_toTopOf="@+id/showReadingButton"
         app:layout_constraintEnd_toEndOf="@+id/divider"
         app:layout_constraintStart_toStartOf="@+id/divider"
         app:layout_constraintTop_toBottomOf="@+id/divider" />
@@ -62,7 +62,7 @@
 
     <Button
         android:id="@+id/showButton"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="50dp"
         android:text="Show Answer"
@@ -76,5 +76,15 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
         app:layout_constraintBottom_toTopOf="@+id/frontOfCard"
+        app:layout_constraintStart_toStartOf="@+id/frontOfCard" />
+
+    <Button
+        android:id="@+id/showReadingButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Show Reading"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/showButton"
+        app:layout_constraintEnd_toEndOf="@+id/frontOfCard"
         app:layout_constraintStart_toStartOf="@+id/frontOfCard" />
 </androidx.constraintlayout.widget.ConstraintLayout>

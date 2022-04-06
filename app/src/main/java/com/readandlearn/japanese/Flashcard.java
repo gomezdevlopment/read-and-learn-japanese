@@ -25,6 +25,7 @@ public class Flashcard extends AppCompatActivity {
     Button good;
     Button again;
     Button show;
+    Button showReading;
     int index = 0;
 
     @Override
@@ -53,6 +54,7 @@ public class Flashcard extends AppCompatActivity {
         good = findViewById(R.id.goodButton);
         again = findViewById(R.id.againButton);
         show = findViewById(R.id.showButton);
+        showReading = findViewById(R.id.showReadingButton);
 
         good.setOnClickListener(v -> {
             String wordAndReading = flashcards.get(index).getWordAndReading();
@@ -78,8 +80,14 @@ public class Flashcard extends AppCompatActivity {
         show.setOnClickListener(v -> {
             good.setVisibility(View.VISIBLE);
             again.setVisibility(View.VISIBLE);
+            showReading.setVisibility(View.INVISIBLE);
             show.setVisibility(View.INVISIBLE);
             revealAnswer();
+        });
+
+        showReading.setOnClickListener(v -> {
+            showReading.setVisibility(View.INVISIBLE);
+            reading.setText(flashcards.get(index).getReading());
         });
 
         setFlashcard();
@@ -93,8 +101,12 @@ public class Flashcard extends AppCompatActivity {
         if (index >= flashcards.size()) {
             front.setText("No More Reviews");
             show.setVisibility(View.INVISIBLE);
+            showReading.setVisibility(View.INVISIBLE);
         } else {
             show.setVisibility(View.VISIBLE);
+            if(!flashcards.get(index).getReading().isEmpty()){
+                showReading.setVisibility(View.VISIBLE);
+            }
             String word = flashcards.get(index).getWord();
             front.setText(word);
         }
