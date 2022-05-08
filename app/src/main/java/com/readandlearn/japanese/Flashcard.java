@@ -6,11 +6,14 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.readandlearn.japanese.RoomDatabase.Word;
 import com.readandlearn.japanese.RoomDatabase.WordDatabase;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -55,6 +58,23 @@ public class Flashcard extends AppCompatActivity {
         again = findViewById(R.id.againButton);
         show = findViewById(R.id.showButton);
         showReading = findViewById(R.id.showReadingButton);
+        FloatingActionButton delete = findViewById(R.id.deleteButton);
+
+        delete.setOnClickListener(v -> {
+
+            new AlertDialog.Builder(this)
+                    .setTitle("Delete Flashcard")
+                    .setMessage("Are you sure you want to delete this flashcard?")
+                    .setPositiveButton(R.string.yes, (dialog, which) -> {
+                        Word word = flashcards.get(index);
+                        wordDatabase.wordDao().deleteWord(word);
+                        flashcards.remove(word);
+                        index+=1;
+                        setFlashcard();
+                    })
+                    .setNegativeButton(R.string.cancel, null)
+                    .show();
+        });
 
         good.setOnClickListener(v -> {
             String wordAndReading = flashcards.get(index).getWordAndReading();

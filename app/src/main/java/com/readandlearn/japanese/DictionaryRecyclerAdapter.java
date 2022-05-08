@@ -13,9 +13,9 @@ import java.util.ArrayList;
 
 public class DictionaryRecyclerAdapter extends RecyclerView.Adapter<DictionaryRecyclerAdapter.DictionaryViewHolder> {
 
-    private ArrayList<DictionaryEntry> dictionaryEntries;
-    private boolean showCheckBox;
-    private ArrayList<Integer> flashcards;
+    private final ArrayList<DictionaryEntry> dictionaryEntries;
+    private final boolean showCheckBox;
+    private final ArrayList<Integer> flashcards;
     public static int arraySize;
     private static ArrayList<CheckBox> checkBoxes;
 
@@ -23,15 +23,15 @@ public class DictionaryRecyclerAdapter extends RecyclerView.Adapter<DictionaryRe
         this.dictionaryEntries = dictionaryEntries;
         this.showCheckBox = showCheckBox;
         this.flashcards = flashcards;
-        this.checkBoxes = new ArrayList<>();
+        checkBoxes = new ArrayList<>();
         arraySize = dictionaryEntries.size();
     }
 
     public class DictionaryViewHolder extends RecyclerView.ViewHolder{
-        private TextView kanji;
-        private TextView reading;
-        private TextView englishDefinitions;
-        private CheckBox checkBox;
+        private final TextView kanji;
+        private final TextView reading;
+        private final TextView englishDefinitions;
+        private final CheckBox checkBox;
 
         public DictionaryViewHolder(final View view){
             super(view);
